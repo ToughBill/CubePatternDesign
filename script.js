@@ -1,4 +1,25 @@
 let __enable_debug_4567__ = false;
+let patternType = 'd12';
+const FontDotSettings = {
+	'd12': {
+		font_row: 15,
+		font_col: 13,
+		dot_row_start_index: 1,
+		dot_row_end_index: 12,
+		dot_col_start_index: 0,
+		dot_col_end_index: 11,
+		spanClass: 'dot12',
+	},
+	'd9': {
+		font_row: 11,
+		font_col: 10,
+		dot_row_start_index: 1,
+		dot_row_end_index: 9,
+		dot_col_start_index: 0,
+		dot_col_end_index: 8,
+		spanClass: 'dot9',
+	}
+};
 if (!__enable_debug_4567__) {
 	const outputDiv = document.getElementById('output');
 	outputDiv.style.position = "absolute";
@@ -10,6 +31,7 @@ if (!__enable_debug_4567__) {
 }
 function displayText() {
 	const input = document.getElementById('textInput').value;
+
 	const outputDiv = document.getElementById('output');
 	outputDiv.innerHTML = '';
 	
@@ -18,11 +40,16 @@ function displayText() {
 	
 	const canvasContainer = document.getElementById('canvasContainer');
 	canvasContainer.innerHTML = '';
+
+	const splitBlocks = document.getElementById('__splitted_blocks__');
+	if (splitBlocks) {
+		splitBlocks.innerHTML = '';
+	}
 	
 	for (const char of input) {
 		const span = document.createElement('span');
 		span.textContent = char;
-		span.className = "schar";
+		span.className = 'schar ' + FontDotSettings[patternType].spanClass;
 		outputDiv.appendChild(span);
 
 		html2canvas(span).then(canvas => {
@@ -30,6 +57,16 @@ function displayText() {
 			processCanvas(canvas, char);
 		});
 	}
+}
+
+function getFontDotDims(type) {
+	let dims = {row: 15, col: 13};
+	if (type == '9') {
+		dims = {row: 11, col: 10};
+	} else if (type == '0') {
+		dims = {row: -1, col: -1};
+	}
+	return dims;
 }
 
 // 等待 OpenCV.js 加载完成
@@ -42,9 +79,8 @@ function processCanvas(canvas, char) {
 	const width = src.cols;
 	const height = src.rows;
 
-	// 字体实际为13x15的点阵
-	const blockWidth = Math.floor(width / 13);  // 13 列
-	const blockHeight = Math.floor(height / 15); // 15 行
+	const blockWidth = Math.floor(width / FontDotSettings[patternType].font_col); 
+	const blockHeight = Math.floor(height / FontDotSettings[patternType].font_row);
 
 	let dotMatrix = [];
 	let splitBlocks, charBlockCon;
@@ -63,7 +99,7 @@ function processCanvas(canvas, char) {
 		charBlockCon.id = "char" + char;
 		splitBlocks.appendChild(charBlockCon);
 	}
-	for (let row = 0; row < 15; row++) {
+	for (let row = 0; row < FontDotSettings[patternType].font_row; row++) {
 		let rowData = [];
 		if (__enable_debug_4567__) {
 			blockRowCon = document.createElement("div");
@@ -71,7 +107,7 @@ function processCanvas(canvas, char) {
 			blockRowCon.height = blockHeight;
 			charBlockCon.appendChild(blockRowCon);
 		}
-		for (let col = 0; col < 13; col++) {
+		for (let col = 0; col < FontDotSettings[patternType].font_col; col++) {
 			let x = col * blockWidth;
 			let y = row * blockHeight;
 			let roi = new cv.Rect(x, y, blockWidth, blockHeight);
@@ -107,8 +143,8 @@ function processCanvas(canvas, char) {
 	// 释放内存
 	src.delete();
 
-	// 假设 dotMatrix 是原始的二维数组
-	let validDotMatrix = dotMatrix.slice(1, 13).map(row => row.slice(0, 12));
+	let validDotMatrix = dotMatrix.slice(FontDotSettings[patternType].dot_row_start_index, FontDotSettings[patternType].dot_row_end_index + 1)
+									.map(row => row.slice(FontDotSettings[patternType].dot_col_start_index, FontDotSettings[patternType].dot_col_end_index + 1));
 	displayBitmapTable(validDotMatrix);
 }
 
@@ -174,4 +210,26 @@ function displayBitmapTable(bitmap) {
 
 	// 添加表格到容器
 	tableContainer.appendChild(table);
+}
+
+function reset() {
+	document.getElementById('textInput').value = '';
+
+	const outputDiv = document.getElementById('output');
+	outputDiv.innerHTML = '';
+
+	const tableContainer = document.getElementById('tableContainer');
+	tableContainer.innerHTML = '';
+	
+	const canvasContainer = document.getElementById('canvasContainer');
+	canvasContainer.innerHTML = '';
+
+	const splitBlocks = document.getElementById('__splitted_blocks__');
+	if (splitBlocks) {
+		splitBlocks.innerHTML = '';
+	}
+}
+
+function selectOption(type) {
+	patternType = type;
 }
