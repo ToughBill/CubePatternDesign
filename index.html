@@ -59,13 +59,14 @@
             background-color: red;
         }
     </style>
+    <script src="navbar.js"></script>
+    <script src="dotTable.js"></script>
 </head>
 <body>
-    <h1>魔方图案设计</h1>
+    <site-navbar></site-navbar>
     <div>
-        <!-- 添加单选按钮 -->
-        <label><input type="radio" name="cubeOption" value="12" onclick="selectOption('d12')" checked> 12阶</label>
-        <label><input type="radio" name="cubeOption" value="9" onclick="selectOption('d9')"> 9阶</label>
+        <label><input type="radio" name="cubeOption" value="12" onclick="selectOption('d12')" checked> 12x12</label>
+        <label><input type="radio" name="cubeOption" value="9" onclick="selectOption('d9')"> 9x9</label>
         <!-- <label><input type="radio" name="cubeOption" value="pattern" onclick="selectOption('d0')"> 图案</label> -->
     </div>
     <div>

@@ -175,41 +175,53 @@ function displayBitmapTable(bitmap) {
 	const tableContainer = document.getElementById('tableContainer');
 	//tableContainer.innerHTML = ''; // 清空之前的表格
 
-	const table = document.createElement('table');
-	table.className = "code-points";
-	const rows = bitmap.length;
-	const cols = bitmap[0].length;
-
-	// 添加列号行
-	const headerRow = document.createElement('tr');
-	headerRow.appendChild(document.createElement('th')); // 左上角空单元格
-	for (let col = 1; col <= cols; col++) {
-		const th = document.createElement('th');
-		th.textContent = col;
-		headerRow.appendChild(th);
-	}
-	table.appendChild(headerRow);
-
-	// 添加数据行
-	for (let row = 0; row < rows; row++) {
-		const tr = document.createElement('tr');
-		const rowHeader = document.createElement('th');
-		// rowHeader.textContent = String.fromCharCode(65 + row); // 行号 A, B, C...
-		rowHeader.textContent = row + 1;
-		tr.appendChild(rowHeader);
-
-		for (let col = 0; col < cols; col++) {
-			const td = document.createElement('td');
-			if (bitmap[row][col] === 1) {
-				td.classList.add('cell-1'); // 设置红色背景
-			}
-			tr.appendChild(td);
+	// convert bitmap to matrix for dot-table
+	let matrix = [];
+	for (let i = 0; i < bitmap.length; i++) {
+		matrix[i] = [];
+		for (let j = 0; j < bitmap[i].length; j++) {
+			matrix[i][j] = {color: bitmap[i][j] ? DotTable.DefaultForeColor : DotTable.DefaultBGColor};
 		}
-		table.appendChild(tr);
 	}
+	const dotTb = document.createElement('dot-table');
+	dotTb.setMatrix(matrix);
+	tableContainer.appendChild(dotTb);
 
-	// 添加表格到容器
-	tableContainer.appendChild(table);
+	// const table = document.createElement('table');
+	// table.className = "code-points";
+	// const rows = bitmap.length;
+	// const cols = bitmap[0].length;
+	//
+	// // 添加列号行
+	// const headerRow = document.createElement('tr');
+	// headerRow.appendChild(document.createElement('th')); // 左上角空单元格
+	// for (let col = 1; col <= cols; col++) {
+	// 	const th = document.createElement('th');
+	// 	th.textContent = col;
+	// 	headerRow.appendChild(th);
+	// }
+	// table.appendChild(headerRow);
+	//
+	// // 添加数据行
+	// for (let row = 0; row < rows; row++) {
+	// 	const tr = document.createElement('tr');
+	// 	const rowHeader = document.createElement('th');
+	// 	// rowHeader.textContent = String.fromCharCode(65 + row); // 行号 A, B, C...
+	// 	rowHeader.textContent = row + 1;
+	// 	tr.appendChild(rowHeader);
+	//
+	// 	for (let col = 0; col < cols; col++) {
+	// 		const td = document.createElement('td');
+	// 		if (bitmap[row][col] === 1) {
+	// 			td.classList.add('cell-1'); // 设置红色背景
+	// 		}
+	// 		tr.appendChild(td);
+	// 	}
+	// 	table.appendChild(tr);
+	// }
+	//
+	// // 添加表格到容器
+	// tableContainer.appendChild(table);
 }
 
 function reset() {

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔方图案设计 - 设计</title>
+    <script src="navbar.js"></script>
+    <script src="dotTable.js"></script>
+    <script src="color-picker.js"></script>
+</head>
+<body>
+    <site-navbar></site-navbar>
+    <div>
+        <label><input type="radio" name="cubeOption" value="12" onclick="selectOption('d12')" checked> 12x12</label>
+        <label><input type="radio" name="cubeOption" value="9" onclick="selectOption('d9')"> 9x9</label>
+        <label>
+            <input type="radio" name="cubeOption" value="0" onclick="selectOption('d0')">
+            行 <input type="text" id="rowCnt" style="width: 60px" disabled>
+            列 <input type="text" id="colCnt" style="width: 60px" disabled>
+            <button id="confirmBtn" onclick="customSizeConfirm();">确定</button>
+        </label>
+    </div>
+    <div style="margin-top: 10px;margin-left: 5px;">
+        <color-picker oncolorchange="onColorChange"></color-picker>
+        <button id="resetTable" onclick="resetTable();">重置表格</button>
+        <button id="copyTable" onclick="copyTable();">复制表格</button>
+    </div>
+    <dot-table row="12" col="12" mode="2" id="designTable" style="position: relative;top: -20px;"></dot-table>
+
+    <script type="application/javascript">
+        const TableMatrixes = [{"matrix":[[{"color":"white"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"}],[{"color":"white"},{"color":"green"},{"color":"white"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"}],[{"color":"green"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"green"},{"color":"white"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"}],[{"color":"white"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"}],[{"color":"white"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"white"}],[{"color":"white"},{"color":"green"},{"color":"white"},{"color":"green"},{"color":"white"},{"color":"green"},{"color":"white"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"white"},{"color":"white"}],[{"color":"white"},{"color":"green"},{"color":"green"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"white"},{"color":"white"}],[{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"blue"},{"color":"white"}],[{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"white"},{"color":"white"}],[{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"blue"},{"color":"white"}],[{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"white"},{"color":"white"},{"color":"blue"}],[{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"white"},{"color":"blue"},{"color":"blue"},{"color":"white"},{"color":"white"},{"color":"white"}]]},
+        ]
+        let patternType = 'd12';
+        function selectOption(type) {
+            patternType = type;
+            const table = document.getElementById('designTable');
+            if (patternType === 'd12') {
+                table.setSize(12, 12);
+            } else if (patternType === 'd9') {
+                table.setSize(9, 9);
+            } else if (patternType === 'd0') {
+            }
+            document.getElementById('rowCnt').disabled = (patternType !== 'd0');
+            document.getElementById('colCnt').disabled = (patternType !== 'd0');
+        }
+        function customSizeConfirm() {
+            const rowVal = document.getElementById('rowCnt').value;
+            const colVal = document.getElementById('colCnt').value;
+            if (rowVal.trim() === '' || colVal.trim() === '') {
+                return;
+            }
+            const table = document.getElementById('designTable');
+            table.setSize(parseInt(rowVal, 10), parseInt(colVal, 10));
+        }
+        function resetTable() {
+            const table = document.getElementById('designTable');
+            table.resetTable();
+        }
+
+        function onColorChange(e) {
+            const table = document.getElementById('designTable');
+            table.setForeColor(e.detail.color);
+        }
+
+        function copyTable() {
+            const table = document.getElementById('designTable');
+            const matrix = table.getMatrix();
+            console.log(matrix);
+            navigator.clipboard.writeText(JSON.stringify({ matrix: matrix })).then(() => {
+
+                console.log('复制成功！');
+            }).catch(err => {
+                console.error('复制失败：', err);
+            });
+        }
+    </script>
+</body>
+</html>
