@@ -163,8 +163,8 @@ class ColorPicker extends HTMLElement {
                     }
 
                     .color-option {
-                        width: 40px;
-                        height: 24px;
+                        width: 20px;
+                        height: 20px;
                         margin: 3px;
                         border: 1px solid #ccc;
 						border-radius: 4px;
